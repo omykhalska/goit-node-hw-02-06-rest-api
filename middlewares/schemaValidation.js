@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const validation = (schema) => {
+const schemaValidation = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body);
     if (error) {
@@ -10,4 +10,4 @@ const validation = (schema) => {
   };
 };
 
-module.exports = validation;
+module.exports = schemaValidation;

@@ -8,7 +8,9 @@ const updateById = async (
   next
 ) => {
   try {
-    const result = await Contact.findByIdAndUpdate(contactId, contact);
+    const result = await Contact.findByIdAndUpdate(contactId, contact, {
+      new: true,
+    });
 
     if (!result) {
       throw createError(404, 'Not found');
