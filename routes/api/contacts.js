@@ -2,19 +2,33 @@ const express = require('express');
 const router = express.Router();
 
 const { contacts: ctrl } = require('../../controllers');
-const { validation } = require('../../middlewares');
-const { contactSchema } = require('../../schemas');
+const { schemaValidation, idValidation } = require('../../middlewares');
+const { joiContactSchema, statusJoiSchema } = require('../../models/contact');
 
-const validateMiddleware = validation(contactSchema);
+const validateIdMiddleware = idValidation();
+const validateSchemaMiddleware = schemaValidation(joiContactSchema);
+const validateFavoriteMiddleware = schemaValidation(statusJoiSchema);
 
 router.get('/', ctrl.getAll);
 
-router.get('/:contactId', ctrl.getById);
+router.get('/:contactId', validateIdMiddleware, ctrl.getById);
 
-router.post('/', validateMiddleware, ctrl.add);
+router.post('/', validateSchemaMiddleware, ctrl.add);
 
-router.delete('/:contactId', ctrl.removeById);
+router.delete('/:contactId', validateIdMiddleware, ctrl.removeById);
 
-router.put('/:contactId', validateMiddleware, ctrl.updateById);
+router.put(
+  '/:contactId',
+  validateIdMiddleware,
+  validateSchemaMiddleware,
+  ctrl.updateById
+);
+
+router.patch(
+  '/:contactId/favorite',
+  validateIdMiddleware,
+  validateFavoriteMiddleware,
+  ctrl.updateStatus
+);
 
 module.exports = router;
