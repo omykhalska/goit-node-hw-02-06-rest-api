@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const { contacts: ctrl } = require('../../controllers');
-const { schemaValidation, idValidation } = require('../../middlewares');
+const { schemaValidation, idValidation, auth } = require('../../middlewares');
 const { joiContactSchema, statusJoiSchema } = require('../../models/contact');
 
 const validateIdMiddleware = idValidation();
 const validateSchemaMiddleware = schemaValidation(joiContactSchema);
 const validateFavoriteMiddleware = schemaValidation(statusJoiSchema);
 
-router.get('/', ctrl.getAll);
+router.get('/', auth, ctrl.getAll);
 
 router.get('/:contactId', validateIdMiddleware, ctrl.getById);
 
