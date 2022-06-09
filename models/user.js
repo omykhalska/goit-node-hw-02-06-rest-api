@@ -42,6 +42,20 @@ const joiLoginSchema = Joi.object({
   email: Joi.string().pattern(EMAIL_PATTERN).required(),
 });
 
+const joiSubscriptionSchema = Joi.object({
+  subscription: Joi.string()
+    .valid('starter', 'pro', 'business')
+    .required()
+    .messages({
+      'any.required': 'missing field subscription',
+    }),
+});
+
 const User = model('user', userSchema);
 
-module.exports = { User, joiRegisterSchema, joiLoginSchema };
+module.exports = {
+  User,
+  joiRegisterSchema,
+  joiLoginSchema,
+  joiSubscriptionSchema,
+};
