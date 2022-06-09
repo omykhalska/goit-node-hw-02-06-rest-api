@@ -12,6 +12,8 @@ router.post('/signup', validateRegisterSchemaMiddleware, ctrl.signup);
 
 router.post('/login', validateLoginSchemaMiddleware, ctrl.login);
 
+router.get('/logout', auth, ctrl.logout);
+
 router.get('/current', auth, ctrl.getCurrent);
 
 module.exports = router;
