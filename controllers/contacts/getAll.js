@@ -4,7 +4,8 @@ const getAll = async (req, res, next) => {
   try {
     const { _id } = req.user;
     const { page = 1, limit = 20 } = req.query;
-    const skip = (page - 1) * limit;
+    const skipped = (page - 1) * limit;
+    const skip = skipped < 0 ? 0 : skipped;
 
     const contacts = await Contact.find({ owner: _id }, '', {
       skip,
