@@ -10,31 +10,26 @@ const getAll = async (req, res, next) => {
     const skip = skipped < 0 ? 0 : skipped;
     const isOnlyFavorite = req.query.favorite === 'true';
 
+    let contacts;
+
     if (isOnlyFavorite) {
-      const contacts = await Contact.find({ owner: _id, favorite: true }, '', {
+      contacts = await Contact.find({ owner: _id, favorite: true }, '', {
         skip,
         limit,
       }).populate('owner', '_id, email');
-
-      res.json({
-        status: 'success',
-        code: 200,
-        page,
-        data: { contacts },
-      });
     } else {
-      const contacts = await Contact.find({ owner: _id }, '', {
+      contacts = await Contact.find({ owner: _id }, '', {
         skip,
         limit,
       }).populate('owner', '_id, email');
-
-      res.json({
-        status: 'success',
-        code: 200,
-        page,
-        data: { contacts },
-      });
     }
+
+    res.json({
+      status: 'success',
+      code: 200,
+      page,
+      data: { contacts },
+    });
   } catch (error) {
     next(error);
   }
