@@ -3,19 +3,38 @@ const { Contact } = require('../../models');
 const getAll = async (req, res, next) => {
   try {
     const { _id } = req.user;
-    const { page = 1, limit = 20 } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
     const skipped = (page - 1) * limit;
     const skip = skipped < 0 ? 0 : skipped;
+    const isOnlyFavorite = req.query.favorite === 'true';
 
-    const contacts = await Contact.find({ owner: _id }, '', {
-      skip,
-      limit: Number(limit),
-    }).populate('owner', '_id, email');
-    res.json({
-      status: 'success',
-      code: 200,
-      data: { result: contacts },
-    });
+    if (isOnlyFavorite) {
+      const contacts = await Contact.find({ owner: _id, favorite: true }, '', {
+        skip,
+        limit,
+      }).populate('owner', '_id, email');
+
+      res.json({
+        status: 'success',
+        code: 200,
+        page,
+        data: { contacts },
+      });
+    } else {
+      const contacts = await Contact.find({ owner: _id }, '', {
+        skip,
+        limit,
+      }).populate('owner', '_id, email');
+
+      res.json({
+        status: 'success',
+        code: 200,
+        page,
+        data: { contacts },
+      });
+    }
   } catch (error) {
     next(error);
   }
