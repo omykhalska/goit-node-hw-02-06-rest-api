@@ -1,28 +1,36 @@
 const fs = require('fs/promises');
-const { User } = require('../../models');
 const path = require('path');
+const Jimp = require('jimp');
+const { User } = require('../../models');
 
 const avatarsDir = path.join(__dirname, '../../', 'public', 'avatars');
 
 const updateAvatar = async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file to upload' });
+  }
+
+  const { _id: id } = req.user;
+  let file = req.file;
+  const { path: tempUpload, originalname } = file;
+
+  const avatarName = `${id}_${originalname}`;
+  const resultUpload = path.join(avatarsDir, avatarName);
+
   try {
-    const { path: tempUpload, originalname } = req.file;
-    const { _id: id } = req.user;
-    const avatarName = `${id}_${originalname}`;
+    file = await Jimp.read(tempUpload);
+    await file.resize(250, 250).quality(75);
+    await file.writeAsync(resultUpload);
 
-    try {
-      const resultUpload = path.join(avatarsDir, avatarName);
-      await fs.rename(tempUpload, resultUpload);
-      const avatarURL = path.join('avatars', avatarName);
+    const avatarURL = path.join('avatars', avatarName);
 
-      await User.findByIdAndUpdate(id, { avatarURL });
+    await User.findByIdAndUpdate(id, { avatarURL }, { new: true });
 
-      res.status(200).json({ avatarURL });
-    } catch (error) {
-      fs.unlink(tempUpload);
-      throw error;
-    }
+    res.status(200).json({ avatarURL });
+
+    fs.unlink(tempUpload);
   } catch (error) {
+    fs.unlink(tempUpload);
     next(error);
   }
 };

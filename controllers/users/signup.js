@@ -14,7 +14,7 @@ const signup = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, bcrypt.genSaltSync(10));
 
-    const avatarURL = gravatar.url(email);
+    const avatarURL = gravatar.url(email, {}, true);
 
     const user = await User.create({
       ...req.body,
