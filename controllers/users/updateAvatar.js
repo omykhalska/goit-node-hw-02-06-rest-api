@@ -15,6 +15,7 @@ const updateAvatar = async (req, res, next) => {
   const { path: tempUpload, originalname } = file;
 
   const avatarName = `${id}_${originalname}`;
+  const avatarURL = path.join('avatars', avatarName);
   const resultUpload = path.join(avatarsDir, avatarName);
 
   try {
@@ -22,16 +23,13 @@ const updateAvatar = async (req, res, next) => {
     await file.resize(250, 250).quality(75);
     await file.writeAsync(resultUpload);
 
-    const avatarURL = path.join('avatars', avatarName);
-
     await User.findByIdAndUpdate(id, { avatarURL }, { new: true });
 
     res.status(200).json({ avatarURL });
-
-    fs.unlink(tempUpload);
   } catch (error) {
-    fs.unlink(tempUpload);
     next(error);
+  } finally {
+    fs.unlink(tempUpload);
   }
 };
 
