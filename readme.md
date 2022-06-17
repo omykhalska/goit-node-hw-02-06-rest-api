@@ -50,6 +50,9 @@
     PATCH
     /users - Update a subscription of the current user. Available options: ['starter', 'pro', 'business'].
 
+    PATCH
+    /users/avatars - Update an avatar of the current user.
+
 ## Schemas
 
 ### Contact Joi Schema:
@@ -67,10 +70,11 @@
 
 ```js
 {
-  password: Joi.string().required(),
   email: Joi.string().required(),
+  password: Joi.string().required(),
   subscription: Joi.string()
     .valid('starter', 'pro', 'business')
     .default('starter'),
+  avatarURL: Joi.string().required().default(gravatar.url(email)),
 }
 ```
