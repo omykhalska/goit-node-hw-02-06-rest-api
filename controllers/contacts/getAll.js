@@ -4,8 +4,8 @@ const getAll = async (req, res, next) => {
   try {
     const { _id } = req.user;
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
     const skipped = (page - 1) * limit;
     const skip = skipped < 0 ? 0 : skipped;
     const isOnlyFavorite = req.query.favorite === 'true';

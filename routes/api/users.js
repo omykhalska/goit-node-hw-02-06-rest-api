@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { users: ctrl } = require('../../controllers');
-const { schemaValidation, auth } = require('../../middlewares');
+const { schemaValidation, auth, upload } = require('../../middlewares');
 const {
   joiRegisterSchema,
   joiLoginSchema,
@@ -27,5 +27,7 @@ router.patch(
   validateSubscriptionMiddleware,
   ctrl.updateSubscription
 );
+
+router.patch('/avatars', auth, upload.single('avatar'), ctrl.updateAvatar);
 
 module.exports = router;
