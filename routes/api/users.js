@@ -7,11 +7,16 @@ const {
   joiRegisterSchema,
   joiLoginSchema,
   joiSubscriptionSchema,
+  joiEmailSchema,
 } = require('../../models/user');
 
 const validateRegisterSchemaMiddleware = schemaValidation(joiRegisterSchema);
 const validateLoginSchemaMiddleware = schemaValidation(joiLoginSchema);
 const validateSubscriptionMiddleware = schemaValidation(joiSubscriptionSchema);
+const validateEmailMiddleware = schemaValidation(
+  joiEmailSchema,
+  'missing required field email'
+);
 
 router.post('/signup', validateRegisterSchemaMiddleware, ctrl.signup);
 
@@ -29,5 +34,9 @@ router.patch(
 );
 
 router.patch('/avatars', auth, upload.single('avatar'), ctrl.updateAvatar);
+
+router.get('/verify/:verificationToken', ctrl.verifyNewUser);
+
+router.post('/verify', validateEmailMiddleware, ctrl.resendVerificationMail);
 
 module.exports = router;

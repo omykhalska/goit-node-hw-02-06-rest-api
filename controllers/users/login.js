@@ -12,6 +12,10 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email });
     let passCompare;
 
+    if (user && !user.verify) {
+      throw createError(401, 'Account activation required');
+    }
+
     if (user) {
       passCompare = await bcrypt.compare(password, user.password);
     }
@@ -25,7 +29,7 @@ const login = async (req, res, next) => {
 
     await User.findByIdAndUpdate(user._id, { token });
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       code: 200,
       token,
