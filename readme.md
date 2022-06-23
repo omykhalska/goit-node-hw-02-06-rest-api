@@ -53,28 +53,39 @@
     PATCH
     /users/avatars - Update an avatar of the current user.
 
+    GET
+    /users/verify/:verificationToken - User email activation request.
+
+    POST
+    /users/verify - Request to resend an email with an account activation link.
+
 ## Schemas
 
-### Contact Joi Schema:
+### Contact Schema:
 
 ```js
 {
-  name: Joi.string().min(2).required(),
-  email: Joi.string().email(),
-  phone: Joi.string(),
-  favorite: Joi.bool().default(false),
+  name: string().min(2).required(),
+  email: string().email(),
+  phone: string(),
+  favorite: bool().default(false),
 }
 ```
 
-### User Joi Schema:
+### User Schema:
 
 ```js
 {
-  email: Joi.string().required(),
-  password: Joi.string().required(),
-  subscription: Joi.string()
+  email: string().required(),
+  password: string().required(),
+  subscription: string()
     .valid('starter', 'pro', 'business')
     .default('starter'),
-  avatarURL: Joi.string().required().default(gravatar.url(email)),
+  avatarURL: string()
+    .required()
+    .default(gravatar.url(email)),
+  token: string().default(null),
+  verify: bool().default(false),
+  verificationToken: string().required(),
 }
 ```
