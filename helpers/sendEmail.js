@@ -1,8 +1,9 @@
 const mailgun = require('mailgun-js');
+require('dotenv').config();
 
-const { MAILGUN_APIKEY } = process.env;
-const DOMAIN = 'sandbox927aca45a8224f33bfade40981ba1c3f.mailgun.org';
-const mg = mailgun({ apiKey: MAILGUN_APIKEY, domain: DOMAIN });
+const { MAILGUN_APIKEY, MAILGUN_DOMAIN } = process.env;
+
+const mg = mailgun({ apiKey: MAILGUN_APIKEY, domain: MAILGUN_DOMAIN });
 
 const sendEmail = async (data) => {
   const email = { ...data, from: 'noreply@oksana.mailgun.org' };
